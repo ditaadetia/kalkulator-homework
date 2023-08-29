@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculator App</title>
+  <link rel="stylesheet" href="App.css">
+  <style>
+    .calculator {
+      width: 300px;
+      margin: auto;
+      margin-top: 100px;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      background-color: #f5f5f5;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .display {
+      font-size: 36px;
+      margin-bottom: 20px;
+      text-align: right;
+      padding: 10px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .flex {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .row-a {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      width:220px
+    }
+
+    button {
+      width:60px;
+      font-size: 24px;
+      padding: 10px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #fff;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #ddd;
+    }
+
+    .operator {
+      background-color: #f0ad4e;
+      color: #fff;
+    }
+
+    .double {
+      flex:2;
+      margin-right:20px
+    }
+
+    .equal-operator{
+      height: 100px;
+    }
+
+    button:active {
+      background-color: #c9302c;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <div class="display">0</div>
+    <div class="buttons">
+      <div class="row">
+        <button onclick="handleAllClearClick()">AC</button>
+        <button onclick="handleClearEntryClick()">CE</button>
+        <button onclick="handleOperatorClick('/')">/</button>
+        <button class="operator" onclick="handleOperatorClick('*')">*</button>
+      </div>
+      <div class="row">
+        <button onclick="handleDigitClick(7)">7</button>
+        <button onclick="handleDigitClick(8)">8</button>
+        <button onclick="handleDigitClick(9)">9</button>
+        <button class="operator" onclick="handleOperatorClick('-')">-</button>
+      </div>
+      <div class="row">
+        <button onclick="handleDigitClick(4)">4</button>
+        <button onclick="handleDigitClick(5)">5</button>
+        <button onclick="handleDigitClick(6)">6</button>
+        <button class="operator" onclick="handleOperatorClick('+')">+</button>
+      </div>
+      <div class="flex">
+        <div class="tombol">
+          <div class="row-a">
+            <button onclick="handleDigitClick(1)">1</button>
+            <button onclick="handleDigitClick(2)">2</button>
+            <button onclick="handleDigitClick(3)">3</button>
+          </div>
+          <div class="row-a">
+            <button class="double" onclick="handleDigitClick(0)">0</button>
+            <button onclick="handleDigitClick('.')">.</button>
+          </div>
+        </div>
+        <button class="operator" onclick="handleEqualClick()">=</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let displayValue = '0';
+    let prevValue = null;
+    let operator = null;
+    let afterValue = null;
+    let result = null;
+
+    function updateDisplay() {
+      document.querySelector('.display').textContent = displayValue;
+    }
+
+    function handleDigitClick(digit) {
+      if (result !== null) {
+        prevValue = null;
+        operator = null;
+        afterValue = null;
+        result = null;
+        displayValue = digit.toString();
+      } else {
+        if (operator) {
+          afterValue = afterValue === null ? digit.toString() : afterValue + digit.toString();
+          displayValue += digit.toString();
+        } else {
+          prevValue = prevValue === null ? digit.toString() : prevValue + digit.toString();
+          displayValue = displayValue === '0' ? digit.toString() : displayValue + digit.toString();
+        }
+      }
+      updateDisplay();
+    }
+
+    function handleOperatorClick(op) {
+      operator = op;
+      displayValue += op;
+      updateDisplay();
+    }
+
+    function handleEqualClick() {
+      if (prevValue === null || afterValue === null || operator === null) return;
+
+      const prevNum = parseFloat(prevValue);
+      const currentNum = parseFloat(afterValue);
+
+      let calculatedResult;
+
+      if (operator === '+') {
+        calculatedResult = prevNum + currentNum;
+      } else if (operator === '-') {
+        calculatedResult = prevNum - currentNum;
+      } else if (operator === '*') {
+        calculatedResult = prevNum * currentNum;
+      } else if (operator === '/') {
+        calculatedResult = prevNum / currentNum;
+      }
+
+      result = calculatedResult;
+      displayValue = `${displayValue} = ${calculatedResult}`;
+      prevValue = calculatedResult.toString();
+      operator = null;
+      afterValue = null;
+      updateDisplay();
+    }
+
+    function handleAllClearClick() {
+      displayValue = '0';
+      prevValue = null;
+      operator = null;
+      afterValue = null;
+      result = null;
+      updateDisplay();
+    }
+
+    function handleClearEntryClick() {
+      if (result !== null) {
+        handleAllClearClick();
+      } else {
+        const newValue = displayValue.slice(0, -1) || '0';
+        displayValue = newValue;
+        if (operator) {
+          afterValue = newValue;
+        } else {
+          prevValue = newValue;
+        }
+        updateDisplay();
+      }
+    }
+  </script>
+</body>
+</html>
